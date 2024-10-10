@@ -22,7 +22,7 @@ if __name__ == "__main__":
         triggers=[
             DeploymentEventTrigger(  # type: ignore
                 expect={"whatever.bro"},
-                parameters={"payload_str": " {{ event.payload_str }}"},
+                parameters={"payload_str": " {{ event.payload }}"},
             )
         ],
     )
