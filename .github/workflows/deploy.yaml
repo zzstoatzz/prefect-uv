@@ -1,0 +1,60 @@
+# Deploys changed flows to the appropriate Prefect Cloud workspace
+
+name: Deploy flows to env
+
+env:
+  WORKSPACE: 'prefect-sandbox/inconspicuous-pond'
+
+  PREFECT_API_KEY: ${{ secrets.PREFECT_API_KEY }}
+  PREFECT_API_URL: ${{ secrets.PREFECT_API_URL }}
+
+on:
+  push:
+    branches: [ main ]
+    paths: 
+      - src/**.py
+      - pyproject.toml
+      - .github/workflows/deploy.yaml
+
+permissions:
+  contents: read
+
+jobs:
+  deploy_flows:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        id: setup_python
+        with:
+          python-version: '3.12'
+          cache: "pip"
+
+      - name: UV Cache
+      # Manually cache the uv cache directory
+      # until setup-python supports it:
+      # https://github.com/actions/setup-python/issues/822
+        uses: actions/cache@v4
+        id: cache-uv
+        with:
+          path: ~/.cache/uv
+          key: uvcache-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}
+
+
+      - name: Install and Deploy
+        run: |
+          python -m pip install --upgrade pip uv
+          uv venv
+          uv pip install --system .
+          prefect cloud workspace set -w $WORKSPACE
+          prefect --no-prompt deploy --all
