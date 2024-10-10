@@ -1,5 +1,5 @@
 [project]
-name = "prefect-pack"
+name = "prefect-uv"
 dynamic = ["version"]
 description = "Minimal LLM friendly Python client for GitHub API."
 readme = "README.md"
@@ -9,10 +9,13 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 requires-python = ">=3.10"
-dependencies = ["prefect", "prefect-docker"]
+dependencies = ["prefect", "uv"]
+
+[project.entry-points."prefect.collections"]
+prefect_uv = "prefect_uv"
 
 [project.optional-dependencies]
-dev = ["ipython", "pre-commit>=2.21,<4.0", "ruff", "prefect-pack[tests]"]
+dev = ["ipython", "pre-commit>=2.21,<4.0", "ruff", "prefect-uv[tests]"]
 
 tests = [
     "flaky",
@@ -26,7 +29,7 @@ tests = [
 ]
 
 [project.urls]
-Code = "https://github.com/zzstoatzz/prefect-pack"
+Code = "https://github.com/zzstoatzz/prefect-uv"
 
 
 [build-system]
@@ -34,7 +37,7 @@ requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-write_to = "src/prefect_pack/_version.py"
+write_to = "src/prefect_uv/_version.py"
 
 [tool.pytest.ini_options]
 markers = [
