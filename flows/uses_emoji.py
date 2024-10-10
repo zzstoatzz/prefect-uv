@@ -2,6 +2,8 @@ import emoji
 import prefect
 
 
-@prefect.flow
+@prefect.flow(log_prints=True)
 def emojize():
-    return emoji.emojize("Hello, World! :smile:")
+    result = emoji.emojize("Hello, World! :smile:")
+    print(result)
+    return result
